@@ -1,0 +1,18 @@
+FROM --platform=linux/arm64 debian:bookworm
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates git bc bison flex build-essential libssl-dev libelf-dev \
+    cpio fakeroot lsb-release lz4 man-db gettext pkg-config libmpc-dev u-boot-tools zstd \
+    libncurses-dev \
+    gcc-arm-linux-gnueabihf \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV CROSS_COMPILE=arm-linux-gnueabihf-
+ENV ARCH=arm
+
+WORKDIR /workspace
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

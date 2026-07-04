@@ -1,1 +1,14 @@
 .DS_Store
+
+# kbuild 산출물 (커널 모듈 빌드 시 자동 생성)
+*.ko
+*.o
+*.mod
+*.mod.c
+.*.cmd
+Module.symvers
+modules.order
+.tmp_versions/
+
+# bb-kernel은 Docker named volume 안에서만 관리 (Mac 저장소에 두지 않음)
+kernel/bb-kernel/
