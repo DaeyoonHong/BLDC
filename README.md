@@ -197,9 +197,9 @@ AUTOSAR                        Linux/Android
 **체크포인트**
 - [x] BBB SSH 접속 확인
 - [x] 타겟 커널 버전과 정확히 일치하는 bb-kernel 태그 확보
-- [ ] Docker 컨테이너 안에서 bb-kernel 빌드 성공
-- [ ] Hello World 드라이버 insmod 성공
-- [ ] dmesg에서 드라이버 로그 확인
+- [x] Docker 컨테이너 안에서 bb-kernel 빌드 성공
+- [x] Hello World 드라이버 insmod 성공
+- [x] dmesg에서 드라이버 로그 확인
 
 ---
 
