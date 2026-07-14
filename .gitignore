@@ -6,6 +6,7 @@
 *.mod
 *.mod.c
 .*.cmd
+.*.d
 Module.symvers
 modules.order
 .tmp_versions/

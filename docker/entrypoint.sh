@@ -2,7 +2,7 @@
 set -e
 
 BB_KERNEL_DIR=/opt/bb-kernel
-DRIVER_SRC=/workspace/kernel/drivers/hello_world
+DRIVERS_ROOT=/workspace/kernel/drivers
 
 if [ ! -d "${BB_KERNEL_DIR}/.git" ]; then
     echo "[entrypoint] bb-kernel 클론 중..."
@@ -26,4 +26,9 @@ else
 fi
 
 echo "[entrypoint] KDIR=${BB_KERNEL_DIR}/KERNEL 로 드라이버 빌드"
-make -C "${BB_KERNEL_DIR}/KERNEL" M="${DRIVER_SRC}" ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- modules
+for driver_dir in "${DRIVERS_ROOT}"/*/; do
+    if [ -f "${driver_dir}/Makefile" ]; then
+        echo "[entrypoint] 드라이버 빌드: ${driver_dir}"
+        make -C "${BB_KERNEL_DIR}/KERNEL" M="${driver_dir}" ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- modules
+    fi
+done
