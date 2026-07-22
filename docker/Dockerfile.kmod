@@ -3,7 +3,7 @@ FROM --platform=linux/arm64 debian:bookworm
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates git bc bison flex build-essential libssl-dev libelf-dev \
     cpio fakeroot lsb-release lz4 man-db gettext pkg-config libmpc-dev u-boot-tools zstd \
-    libncurses-dev \
+    libncurses-dev device-tree-compiler \
     gcc-arm-linux-gnueabihf \
     && rm -rf /var/lib/apt/lists/*
 

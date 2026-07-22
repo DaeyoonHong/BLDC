@@ -27,8 +27,14 @@ fi
 
 echo "[entrypoint] KDIR=${BB_KERNEL_DIR}/KERNEL 로 드라이버 빌드"
 for driver_dir in "${DRIVERS_ROOT}"/*/; do
-    if [ -f "${driver_dir}/Makefile" ]; then
-        echo "[entrypoint] 드라이버 빌드: ${driver_dir}"
+    makefile="${driver_dir}/Makefile"
+    [ -f "${makefile}" ] || continue
+
+    if grep -q '^obj-m' "${makefile}"; then
+        echo "[entrypoint] 커널 모듈 빌드: ${driver_dir}"
         make -C "${BB_KERNEL_DIR}/KERNEL" M="${driver_dir}" ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- modules
+    else
+        echo "[entrypoint] 디바이스 트리 오버레이 빌드: ${driver_dir}"
+        make -C "${driver_dir}"
     fi
 done
