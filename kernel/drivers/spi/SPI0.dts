@@ -2,45 +2,55 @@
 /plugin/;
 
 /{
-    fragment@0 {
-        target-path="/";
-        __overlay__ {
-            chosen {
-                overlays {
-                    BB-SPI0 = "__TIMESTAMP__";
-                };
-            };
-        };
-    };
+	fragment@0 {
+		target-path="/";
+		__overlay__ {
+			chosen {
+				overlays {
+					BB-SPI0 = "__TIMESTAMP__";
+				};
+			};
+		};
+	};
 
-    fragment@1 {
-        target = <&am33xx_pinmux>;
-        __overlay__ {
-            bb_spi0_pins: pinmux-spi0-pins {
-                pinctrl-single,pins = <
-                0x150 0x30   /* spi0_sclk, INPUT_PULLUP | MODE0 */
-                0x154 0x30   /* spi0_d0,   INPUT_PULLUP | MODE0 */
-                0x158 0x10   /* spi0_d1,   OUTPUT_PULLUP | MODE0 */
-                0x15C 0x10   /* spi0_cs0,  OUTPUT_PULLUP | MODE0 */
-                >;
-            };
-        };
-    };
+	fragment@1 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+			bb_spi0_pins: bb_spi0_pins_grp {
+				pinctrl-single,pins = <
+					0x150 0x30 0x0
+					0x154 0x30 0x0
+					0x158 0x10 0x0
+					0x15C 0x10 0x0
+				>;
+			};
+		};
+	};
 
-    fragment@2 {
-        target = <&spi0>;
-        __overlay__ {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            status = "okay";
-            pinctrl-names = "default";
-            pinctrl-0 = <&bb_spi0_pins>;
+	fragment@2 {
+		target = <&spi0>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+			pinctrl-names = "default";
+			pinctrl-0 = <&bb_spi0_pins>;
 
-            spidev0_0: spi@0 {
-                compatible = "rohm,dh2228fv";
-                reg = <0>;
-                spi-max-frequency = <16000000>;
-            };
-        };
-    };
+			spidev0_0: spi@0 {
+				compatible = "rohm,dh2228fv";
+				reg = <0>;
+				spi-max-frequency = <16000000>;
+			};
+		};
+	};
+
+	fragment@3 {
+		target = <&ocp>;
+		__overlay__ {
+			P9_17_pinmux { status = "disabled"; };
+			P9_18_pinmux { status = "disabled"; };
+			P9_21_pinmux { status = "disabled"; };
+			P9_22_pinmux { status = "disabled"; };
+		};
+	};
 };
