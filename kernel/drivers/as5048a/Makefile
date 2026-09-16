@@ -1,4 +1,4 @@
-obj-m += as5048a_1.o
+obj-m += as5048a.o
 
 all:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules
