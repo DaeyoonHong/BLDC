@@ -36,10 +36,11 @@
 			pinctrl-names = "default";
 			pinctrl-0 = <&bb_spi0_pins>;
 
-			spidev0_0: spi@0 {
-				compatible = "rohm,dh2228fv";
+			as5048a0: spi@0 {
+				compatible = "ams,as5048a";
 				reg = <0>;
-				spi-max-frequency = <16000000>;
+				/* 클럭 상한선만 지정. 실제 사용 클럭은 드라이버가 spi->max_speed_hz로 결정 */
+				spi-max-frequency = <10000000>;
 			};
 		};
 	};
