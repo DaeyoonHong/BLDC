@@ -44,8 +44,9 @@ MODULE_LICENSE("GPL");
 #define AS5048A_FRAME_BITS	16
 #define AS5048A_ANGLE_MASK	GENMASK(13, 0)
 #define AS5048A_ANGLE_STEPS	16384		/* 2^14 */
+#define AS5048A_CMD_READ_ANGLE	0xFFFF
 
-#define AS5048A_MAX_SPEED_HZ	10000000	/* 10000kHz, datasheet max */
+#define AS5048A_MAX_SPEED_HZ	1000000		/* debug: 1MHz (datasheet max is 10MHz) */
 
 /*
  * The datasheet only specifies a flat >= 350ns CS-idle minimum between
@@ -89,12 +90,13 @@ static inline struct as5048a_state *file_to_state(struct file *f)
 /*
  * Clocks out one 16-bit frame and returns the raw 14-bit angle field.
  *
- * tx content is don't-care: a plain read only needs 16 SCLK cycles, the
- * angle comes back on rx regardless of what is driven on MOSI.
+ * The device answers each frame with the result of the previous frame's
+ * command, so MOSI must carry the read-angle command (R/W=1, addr 0x3FFF,
+ * even parity = 0xFFFF). Sending 0x0000 is a NOP and returns 0.
  */
 static int as5048a_read_angle_raw(struct spi_device *spi, u16 *raw14)
 {
-	u16 tx = 0x0000;
+	u16 tx = AS5048A_CMD_READ_ANGLE;
 	u16 rx;
 	struct spi_transfer xfer = {
 		.tx_buf = &tx,
@@ -120,7 +122,7 @@ static int as5048a_read_angle_raw(struct spi_device *spi, u16 *raw14)
 
 static inline u32 as5048a_raw_to_millideg(u16 raw14)
 {
-	return ((u32)raw14 * 360000) / AS5048A_ANGLE_STEPS;
+	return ((u64)raw14 * 360000) / AS5048A_ANGLE_STEPS;
 }
 
 /*
@@ -217,7 +219,7 @@ static int as5048a_probe(struct spi_device *spi)
 	st->miscdev.minor = MISC_DYNAMIC_MINOR;
 	st->miscdev.name = "as5048a_angle";
 	st->miscdev.fops = &as5048a_fops;
-	ret = devm_misc_register(&spi->dev, &st->miscdev);
+	ret = misc_register(&st->miscdev);
 	if (ret < 0)
 		return dev_err_probe(&spi->dev, ret, "misc_register failed\n");
 
@@ -225,9 +227,11 @@ static int as5048a_probe(struct spi_device *spi)
 	 * the state it touches (st, spi) is torn down.
 	 */
 	st->poll_task = kthread_run(as5048a_poll_thread, st, "as5048a_poll");
-	if (IS_ERR(st->poll_task))
+	if (IS_ERR(st->poll_task)) {
+		misc_deregister(&st->miscdev);
 		return dev_err_probe(&spi->dev, PTR_ERR(st->poll_task),
 				     "kthread_run failed\n");
+	}
 
 	dev_info(&spi->dev, "as5048a: probed, /dev/%s ready\n", st->miscdev.name);
 
@@ -238,6 +242,7 @@ static void as5048a_remove(struct spi_device *spi)
 {
 	struct as5048a_state *st = spi_get_drvdata(spi);
 
+	misc_deregister(&st->miscdev);
 	kthread_stop(st->poll_task);
 
 	dev_info(&spi->dev, "as5048a: removed\n");

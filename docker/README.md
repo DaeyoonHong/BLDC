@@ -43,7 +43,7 @@ BLDC/
 docker run --rm \
     -v "${PROJECT_ROOT}/kernel:/workspace/kernel" \   # 호스트 kernel/ → 컨테이너 /workspace/kernel
     -v bb-kernel-cache:/opt/bb-kernel \               # bb-kernel 소스 트리 캐시 (named volume)
-    -e TARGET_KERNEL_TAG=6.12.28-bone25 \
+    -e TARGET_KERNEL_TAG=6.12.109-bone72 \
     bldc-kmod-builder
 ```
 
@@ -62,7 +62,7 @@ docker run --rm \
 컨테이너 시작 시 자동으로 다음을 수행한다:
 
 1. `/opt/bb-kernel`에 [RobertCNelson/bb-kernel](https://github.com/RobertCNelson/bb-kernel)이 없으면 클론 (캐시 볼륨이라 최초 1회만)
-2. `TARGET_KERNEL_TAG` (현재 `6.12.28-bone25`)로 checkout
+2. `TARGET_KERNEL_TAG` (현재 `6.12.109-bone72`)로 checkout
 3. `system.sh` 생성 (`CC=arm-linux-gnueabihf-`, `AUTO_BUILD=1`)
 4. `KERNEL/` 트리가 없으면 `build_kernel.sh` (최초, 오래 걸림) / 있으면 `tools/rebuild.sh` (증분)
 5. 준비된 커널 트리를 KDIR 삼아 드라이버를 out-of-tree 빌드:

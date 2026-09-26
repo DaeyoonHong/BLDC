@@ -4,8 +4,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates git bc bison flex build-essential libssl-dev libelf-dev \
     cpio fakeroot lsb-release lz4 man-db gettext pkg-config libmpc-dev u-boot-tools zstd \
     libncurses-dev device-tree-compiler \
+    kmod libdw-dev bindgen rust-src rustc rustfmt rust-clippy \
     gcc-arm-linux-gnueabihf \
     && rm -rf /var/lib/apt/lists/*
+
+RUN git config --global user.name "bldc-builder" \
+    && git config --global user.email "bldc-builder@localhost"
 
 ENV CROSS_COMPILE=arm-linux-gnueabihf-
 ENV ARCH=arm

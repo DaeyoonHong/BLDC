@@ -9,5 +9,5 @@ docker build -t bldc-kmod-builder -f "${SCRIPT_DIR}/Dockerfile.kmod" "${SCRIPT_D
 docker run --rm \
     -v "${PROJECT_ROOT}/kernel:/workspace/kernel" \
     -v bb-kernel-cache:/opt/bb-kernel \
-    -e TARGET_KERNEL_TAG=6.12.28-bone25 \
+    -e TARGET_KERNEL_TAG=6.12.109-bone72 \
     bldc-kmod-builder
